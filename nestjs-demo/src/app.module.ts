@@ -51,6 +51,8 @@ const envFilePath = `.env.${process.env.NODE_ENV}`;
           // 同步本地 schema 与 数据库
           synchronize: configService.get(ConfigEnum.DB_SYNC),
           logging: ['error'],
+          retryDelay: 5000,
+          retryAttempts: Infinity,
         } as TypeOrmModuleOptions;
       },
     }),
