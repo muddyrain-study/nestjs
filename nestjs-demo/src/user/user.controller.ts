@@ -12,10 +12,15 @@ export class UserController {
 
   @Get()
   getUsers(): any {
-    const data = this.configService.get('db');
+    const db = this.configService.get('db');
+    const db_port = this.configService.get('db_port');
     console.log(
-      '🚀 ~ file: user.controller.ts:16 ~ UserController ~ getUsers ~ data:',
-      data,
+      '🚀 ~ file: user.controller.ts:17 ~ UserController ~ getUsers ~ db_port:',
+      db_port,
+    );
+    console.log(
+      '🚀 ~ file: user.controller.ts:16 ~ UserController ~ getUsers ~ db:',
+      db,
     );
     return this.userService.getUsers();
   }
