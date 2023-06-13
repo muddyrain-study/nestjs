@@ -1,7 +1,8 @@
 import { ConfigEnum } from './../enum/config.enum';
-import { Controller, Get, Post } from '@nestjs/common';
+import { Controller, Delete, Get, Post, Put } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ConfigService } from '@nestjs/config';
+import { User } from './user.entity';
 
 @Controller('user')
 export class UserController {
@@ -12,21 +13,23 @@ export class UserController {
 
   @Get()
   getUsers(): any {
-    const db = this.configService.get('db');
-    const db_port = this.configService.get('db_port');
-    console.log(
-      '🚀 ~ file: user.controller.ts:17 ~ UserController ~ getUsers ~ db_port:',
-      db_port,
-    );
-    console.log(
-      '🚀 ~ file: user.controller.ts:16 ~ UserController ~ getUsers ~ db:',
-      db,
-    );
-    return this.userService.getUsers();
+    return this.userService.findAll();
   }
 
   @Post()
   addUser(): any {
-    return this.userService.addUser();
+    const user = { username: 'muddyrain', password: '123456' } as User;
+    return this.userService.create(user);
+  }
+
+  @Put()
+  updateUser(): any {
+    const user = { username: 'muddyrain', password: '123456789' } as User;
+    return this.userService.update(1, user);
+  }
+
+  @Delete()
+  deleteUser(): any {
+    return this.userService.remove(1);
   }
 }
