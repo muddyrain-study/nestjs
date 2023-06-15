@@ -32,4 +32,14 @@ export class UserController {
   deleteUser(): any {
     return this.userService.remove(1);
   }
+
+  @Get('/profile')
+  getUserProfile(): any {
+    return this.userService.findProfile(2);
+  }
+
+  @Get('/logs')
+  getUserLogs(): any {
+    return this.userService.findUserLogs(2);
+  }
 }
