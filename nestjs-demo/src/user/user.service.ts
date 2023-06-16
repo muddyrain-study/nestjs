@@ -55,4 +55,17 @@ export class UserService {
       },
     });
   }
+
+  async findLogsByGroup(id: number) {
+    // return this.logsRepository
+    //   .createQueryBuilder('logs')
+    //   .select('logs.result', 'result')
+    //   .addSelect("COUNT('logs.result')", 'count')
+    //   .leftJoinAndSelect('logs.user', 'users')
+    //   .where('users.id = :id', { id })
+    //   .groupBy('logs.result')
+    //   .orderBy('result', 'DESC')
+    //   .getRawMany();
+    return this.logsRepository.query(`select * from logs`);
+  }
 }

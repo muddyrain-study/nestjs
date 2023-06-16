@@ -54,7 +54,8 @@ const envFilePath = `.env.${process.env.NODE_ENV}`;
           entities: [User, Profile, Logs, Roles],
           // 同步本地 schema 与 数据库
           synchronize: configService.get(ConfigEnum.DB_SYNC),
-          logging: ['error'],
+          logging: process.env.NODE_ENV === 'development',
+          // logging: ['error'],
           retryDelay: 5000,
           retryAttempts: Infinity,
         } as TypeOrmModuleOptions;
