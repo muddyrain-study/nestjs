@@ -4,7 +4,8 @@ import { UserService } from './user.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user.entity';
 import { Logs } from 'src/logs/logs.entity';
-
+import { resolve } from 'path';
+console.log(resolve(__dirname, '../../logs/log.txt'));
 @Module({
   imports: [TypeOrmModule.forFeature([User, Logs])],
   controllers: [UserController],

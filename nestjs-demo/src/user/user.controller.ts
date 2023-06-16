@@ -1,18 +1,23 @@
-import { ConfigEnum } from './../enum/config.enum';
 import { Controller, Delete, Get, Post, Put } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ConfigService } from '@nestjs/config';
 import { User } from './user.entity';
+import { Logger } from 'nestjs-pino';
 
 @Controller('user')
 export class UserController {
+  // private logger = new Logger(UserController.name);
   constructor(
     private userService: UserService,
     private configService: ConfigService,
-  ) {}
+    private logger: Logger,
+  ) {
+    this.logger.log('User Controller Initialized11');
+  }
 
   @Get()
   getUsers(): any {
+    this.logger.log('请求 user Controller 成功');
     return this.userService.findAll();
   }
 

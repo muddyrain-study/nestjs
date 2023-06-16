@@ -10,6 +10,8 @@ import { User } from './user/user.entity';
 import { Profile } from './user/profile.entity';
 import { Logs } from './logs/logs.entity';
 import { Roles } from './roles/roles.entity';
+import { LoggerModule } from 'nestjs-pino';
+import { join, resolve } from 'path';
 
 const envFilePath = `.env.${process.env.NODE_ENV}`;
 @Module({
@@ -54,11 +56,37 @@ const envFilePath = `.env.${process.env.NODE_ENV}`;
           entities: [User, Profile, Logs, Roles],
           // 同步本地 schema 与 数据库
           synchronize: configService.get(ConfigEnum.DB_SYNC),
-          logging: process.env.NODE_ENV === 'development',
-          // logging: ['error'],
+          // logging: process.env.NODE_ENV === 'development',
+          logging: ['error'],
           retryDelay: 5000,
           retryAttempts: Infinity,
         } as TypeOrmModuleOptions;
+      },
+    }),
+    LoggerModule.forRoot({
+      pinoHttp: {
+        transport: {
+          targets: [
+            process.env.NODE_ENV === 'development'
+              ? {
+                  level: 'info',
+                  target: 'pino-pretty',
+                  options: {
+                    colorize: true,
+                  },
+                }
+              : {
+                  level: 'info',
+                  target: 'pino-roll',
+                  options: {
+                    // file: resolve(__dirname, '../../logs/log.txt'),
+                    file: join('logs', 'log.txt'),
+                    frequency: 'daily',
+                    mkdir: true,
+                  },
+                },
+          ],
+        },
       },
     }),
     UserModule,
