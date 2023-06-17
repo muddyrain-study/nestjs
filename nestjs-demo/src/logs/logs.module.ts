@@ -6,6 +6,18 @@ import { WinstonModule, utilities } from 'nest-winston';
 import { Console } from 'winston/lib/winston/transports';
 import * as DailyRotateFile from 'winston-daily-rotate-file';
 
+const createDailyRotateTransport = (level: string, filename: string) => {
+  return new DailyRotateFile({
+    level,
+    dirname: 'logs',
+    filename: `${filename}-%DATE%.log`,
+    datePattern: 'YYYY-MM-DD-HH',
+    zippedArchive: true,
+    maxSize: '20m',
+    maxFiles: '14d',
+  });
+};
+
 @Module({
   imports: [
     WinstonModule.forRootAsync({
@@ -19,30 +31,14 @@ import * as DailyRotateFile from 'winston-daily-rotate-file';
           ),
         });
 
-        const dailyTransport = new DailyRotateFile({
-          level: 'warn',
-          dirname: 'logs',
-          filename: 'warn-%DATE%.log',
-          datePattern: 'YYYY-MM-DD-HH',
-          zippedArchive: true,
-          maxSize: '20m',
-          maxFiles: '14d',
-        });
-
-        const dailyInfoTransport = new DailyRotateFile({
-          level: config.get(LogEnum.LOG_LEVEL),
-          dirname: 'logs',
-          filename: 'info-%DATE%.log',
-          datePattern: 'YYYY-MM-DD-HH',
-          zippedArchive: true,
-          maxSize: '20m',
-          maxFiles: '14d',
-        });
         return {
           transports: [
             consoleTansPorts,
-            ...(config.get(LogEnum.LOG_ON)
-              ? [dailyTransport, dailyInfoTransport]
+            ...(config.get(LogEnum.LOG_ON) === 'true'
+              ? [
+                  createDailyRotateTransport('info', 'application'),
+                  createDailyRotateTransport('warn', 'error'),
+                ]
               : []),
           ],
         };

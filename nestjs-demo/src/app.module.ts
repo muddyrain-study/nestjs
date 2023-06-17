@@ -23,7 +23,10 @@ const envFilePath = `.env.${process.env.NODE_ENV}`;
           .default('development'),
         DB_PORT: Joi.number().default(3306),
         DB_URL: Joi.string().domain(),
-        DB_HOST: Joi.string().ip(),
+        DB_HOST: Joi.alternatives().try(
+          Joi.string().ip(),
+          Joi.string().domain(),
+        ),
         DB_TYPE: Joi.string().valid('mysql'),
       }),
     }),

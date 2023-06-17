@@ -1,24 +1,41 @@
+import { ConfigEnum } from './src/enum/config.enum';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { Logs } from './src/logs/logs.entity';
-import { Roles } from './src/roles/roles.entity';
-import { Profile } from './src/user/profile.entity';
-import { User } from './src/user/user.entity';
+
 import { DataSource, DataSourceOptions } from 'typeorm';
-export const connectionParams = {
-  type: 'mysql',
-  host: '127.0.0.1',
-  port: 3306,
-  username: 'root',
-  password: 'mm001030',
-  database: 'nest-study',
-  entities: [User, Profile, Logs, Roles],
-  // 同步本地 schema 与 数据库
-  synchronize: true,
-  // logging: process.env.NODE_ENV === 'development',
-  logging: ['error'],
-  retryDelay: 5000,
-  retryAttempts: Infinity,
-} as TypeOrmModuleOptions;
+import * as fs from 'fs';
+import * as dotenv from 'dotenv';
+
+function getEnv(env: string): Record<string, unknown> {
+  if (fs.existsSync(env)) {
+    return dotenv.parse(fs.readFileSync(env));
+  }
+  return {};
+}
+function buildConnectionOptions() {
+  const defaultConfig = getEnv('.env');
+  const envConfig = getEnv(`.env.${process.env.NODE_ENV || 'development'}`);
+  const config = { ...defaultConfig, ...envConfig };
+
+  const entitiesDir =
+    process.env.NODE_ENV === 'test'
+      ? [__dirname + '/**/*.entity.ts']
+      : [__dirname + '/**/*.entity.{ts,js}'];
+  return {
+    type: config[ConfigEnum.DB],
+    host: config[ConfigEnum.DB_HOST],
+    port: config[ConfigEnum.DB_PORT],
+    username: config[ConfigEnum.DB_USERNAME],
+    password: config[ConfigEnum.DB_PASSWORD],
+    database: config[ConfigEnum.DB_DATABASE],
+    entities: entitiesDir,
+    // 同步本地 schema 与 数据库
+    synchronize: config[ConfigEnum.DB_SYNC],
+    // logging: process.env.NODE_ENV === 'development',
+    logging: ['error'],
+  } as TypeOrmModuleOptions;
+}
+
+export const connectionParams = buildConnectionOptions();
 
 export default new DataSource({
   ...connectionParams,
