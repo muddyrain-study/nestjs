@@ -2,16 +2,12 @@ import { ConfigEnum } from './enum/config.enum';
 import { Global, Logger, Module } from '@nestjs/common';
 import { UserModule } from './user/user.module';
 import { RangeModule } from './range/range.module';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import * as dotenv from 'dotenv';
 import * as Joi from 'joi';
-import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { User } from './user/user.entity';
-import { Profile } from './user/profile.entity';
-import { Logs } from './logs/logs.entity';
-import { Roles } from './roles/roles.entity';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { LogsModule } from './logs/logs.module';
-import ormconfig from 'ormconfig';
+import { connectionParams } from '../ormconfig';
 
 const envFilePath = `.env.${process.env.NODE_ENV}`;
 @Global()
@@ -31,7 +27,7 @@ const envFilePath = `.env.${process.env.NODE_ENV}`;
         DB_TYPE: Joi.string().valid('mysql'),
       }),
     }),
-    TypeOrmModule.forRoot(ormconfig),
+    TypeOrmModule.forRoot(connectionParams),
     UserModule,
     RangeModule,
     LogsModule,

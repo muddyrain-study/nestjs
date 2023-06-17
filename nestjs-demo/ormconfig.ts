@@ -1,10 +1,10 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { Logs } from 'src/logs/logs.entity';
-import { Roles } from 'src/roles/roles.entity';
-import { Profile } from 'src/user/profile.entity';
-import { User } from 'src/user/user.entity';
-
-export default {
+import { Logs } from './src/logs/logs.entity';
+import { Roles } from './src/roles/roles.entity';
+import { Profile } from './src/user/profile.entity';
+import { User } from './src/user/user.entity';
+import { DataSource, DataSourceOptions } from 'typeorm';
+export const connectionParams = {
   type: 'mysql',
   host: '127.0.0.1',
   port: 3306,
@@ -19,3 +19,9 @@ export default {
   retryDelay: 5000,
   retryAttempts: Infinity,
 } as TypeOrmModuleOptions;
+
+export default new DataSource({
+  ...connectionParams,
+  migrations: ['src/migrations/**'],
+  subscribers: [],
+} as DataSourceOptions);
