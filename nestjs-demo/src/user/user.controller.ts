@@ -1,8 +1,16 @@
-import { Controller, Delete, Get, Post, Put } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  Get,
+  HttpException,
+  HttpStatus,
+  Logger,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { ConfigService } from '@nestjs/config';
 import { User } from './user.entity';
-import { Logger } from 'nestjs-pino';
 
 @Controller('user')
 export class UserController {
@@ -17,6 +25,15 @@ export class UserController {
 
   @Get()
   getUsers(): any {
+    const user = {
+      isAdmin: false,
+    };
+    if (!user.isAdmin) {
+      throw new HttpException(
+        'User is not admin ,Forbidden to access getAllUsers',
+        HttpStatus.FORBIDDEN,
+      );
+    }
     this.logger.log('请求 user Controller 成功');
     return this.userService.findAll();
   }

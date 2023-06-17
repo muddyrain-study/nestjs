@@ -1,5 +1,5 @@
 import { ConfigEnum } from './enum/config.enum';
-import { Module } from '@nestjs/common';
+import { Global, Logger, Module } from '@nestjs/common';
 import { UserModule } from './user/user.module';
 import { RangeModule } from './range/range.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -10,10 +10,9 @@ import { User } from './user/user.entity';
 import { Profile } from './user/profile.entity';
 import { Logs } from './logs/logs.entity';
 import { Roles } from './roles/roles.entity';
-import { LoggerModule } from 'nestjs-pino';
-import { join, resolve } from 'path';
 
 const envFilePath = `.env.${process.env.NODE_ENV}`;
+@Global()
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -63,35 +62,36 @@ const envFilePath = `.env.${process.env.NODE_ENV}`;
         } as TypeOrmModuleOptions;
       },
     }),
-    LoggerModule.forRoot({
-      pinoHttp: {
-        transport: {
-          targets: [
-            process.env.NODE_ENV === 'development'
-              ? {
-                  level: 'info',
-                  target: 'pino-pretty',
-                  options: {
-                    colorize: true,
-                  },
-                }
-              : {
-                  level: 'info',
-                  target: 'pino-roll',
-                  options: {
-                    // file: resolve(__dirname, '../../logs/log.txt'),
-                    file: join('logs', 'log.txt'),
-                    frequency: 'daily',
-                    mkdir: true,
-                  },
-                },
-          ],
-        },
-      },
-    }),
+    // LoggerModule.forRoot({
+    //   pinoHttp: {
+    //     transport: {
+    //       targets: [
+    //         process.env.NODE_ENV === 'development'
+    //           ? {
+    //               level: 'info',
+    //               target: 'pino-pretty',
+    //               options: {
+    //                 colorize: true,
+    //               },
+    //             }
+    //           : {
+    //               level: 'info',
+    //               target: 'pino-roll',
+    //               options: {
+    //                 // file: resolve(__dirname, '../../logs/log.txt'),
+    //                 file: join('logs', 'log.txt'),
+    //                 frequency: 'daily',
+    //                 mkdir: true,
+    //               },
+    //             },
+    //       ],
+    //     },
+    //   },
+    // }),
     UserModule,
     RangeModule,
   ],
-  providers: [],
+  providers: [Logger],
+  exports: [Logger],
 })
 export class AppModule {}
