@@ -10,6 +10,7 @@ import { User } from './user/user.entity';
 import { Profile } from './user/profile.entity';
 import { Logs } from './logs/logs.entity';
 import { Roles } from './roles/roles.entity';
+import { LogsModule } from './logs/logs.module';
 
 const envFilePath = `.env.${process.env.NODE_ENV}`;
 @Global()
@@ -29,18 +30,6 @@ const envFilePath = `.env.${process.env.NODE_ENV}`;
         DB_TYPE: Joi.string().valid('mysql'),
       }),
     }),
-    // TypeOrmModule.forRoot({
-    //   type: 'mysql',
-    //   host: 'localhost',
-    //   port: 3306,
-    //   username: 'root',
-    //   password: 'mm001030',
-    //   database: 'nest-study',
-    //   entities: [],
-    //   // 同步本地 schema 与 数据库
-    //   synchronize: true,
-    //   logging: ['error'],
-    // }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -62,34 +51,9 @@ const envFilePath = `.env.${process.env.NODE_ENV}`;
         } as TypeOrmModuleOptions;
       },
     }),
-    // LoggerModule.forRoot({
-    //   pinoHttp: {
-    //     transport: {
-    //       targets: [
-    //         process.env.NODE_ENV === 'development'
-    //           ? {
-    //               level: 'info',
-    //               target: 'pino-pretty',
-    //               options: {
-    //                 colorize: true,
-    //               },
-    //             }
-    //           : {
-    //               level: 'info',
-    //               target: 'pino-roll',
-    //               options: {
-    //                 // file: resolve(__dirname, '../../logs/log.txt'),
-    //                 file: join('logs', 'log.txt'),
-    //                 frequency: 'daily',
-    //                 mkdir: true,
-    //               },
-    //             },
-    //       ],
-    //     },
-    //   },
-    // }),
     UserModule,
     RangeModule,
+    LogsModule,
   ],
   providers: [Logger],
   exports: [Logger],

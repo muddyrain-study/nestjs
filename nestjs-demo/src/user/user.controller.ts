@@ -1,10 +1,13 @@
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import {
   Controller,
   Delete,
   Get,
   HttpException,
   HttpStatus,
+  Inject,
   Logger,
+  LoggerService,
   Post,
   Put,
 } from '@nestjs/common';
@@ -18,7 +21,8 @@ export class UserController {
   constructor(
     private userService: UserService,
     private configService: ConfigService,
-    private logger: Logger,
+    @Inject(WINSTON_MODULE_NEST_PROVIDER)
+    private readonly logger: LoggerService,
   ) {
     this.logger.log('User Controller Initialized11');
   }
