@@ -1,5 +1,6 @@
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import {
+  Body,
   Controller,
   Delete,
   Get,
@@ -8,12 +9,15 @@ import {
   Inject,
   Logger,
   LoggerService,
+  Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ConfigService } from '@nestjs/config';
 import { User } from './user.entity';
+import { getUserDto } from './dto/getUser.dto';
 
 @Controller('user')
 export class UserController {
@@ -33,28 +37,23 @@ export class UserController {
   }
 
   @Get()
-  getUsers(): any {
-    const user = {
-      isAdmin: false,
-    };
-    if (!user.isAdmin) {
-      throw new HttpException(
-        'User is not admin ,Forbidden to access getAllUsers',
-        HttpStatus.FORBIDDEN,
-      );
-    }
-    this.logger.log('请求 user Controller 成功');
-    return this.userService.findAll();
+  getUsers(@Query() query: getUserDto): any {
+    return this.userService.findAll(query);
   }
 
   @Post()
-  addUser(): any {
+  addUser(@Body() dto: any): any {
+    console.log(
+      '🚀 ~ file: user.controller.ts:56 ~ UserController ~ addUser ~ dto:',
+      dto,
+    );
+
     const user = { username: 'muddyrain', password: '123456' } as User;
     return this.userService.create(user);
   }
 
-  @Put()
-  updateUser(): any {
+  @Put('/:id')
+  updateUser(@Body() dto: any, @Param('id') id: number): any {
     const user = { username: 'muddyrain', password: '123456789' } as User;
     return this.userService.update(1, user);
   }
