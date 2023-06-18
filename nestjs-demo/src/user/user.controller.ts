@@ -27,6 +27,11 @@ export class UserController {
     this.logger.log('User Controller Initialized11');
   }
 
+  @Get('/:id')
+  getUser(): any {
+    return 'hello world';
+  }
+
   @Get()
   getUsers(): any {
     const user = {
