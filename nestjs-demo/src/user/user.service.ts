@@ -13,7 +13,17 @@ export class UserService {
   ) {}
 
   async findAll(query: getUserDto) {
-    return this.userRepository.find();
+    const { username, role, gender } = query;
+    return (
+      this.userRepository
+        .createQueryBuilder('user')
+        .leftJoinAndSelect('user.profile', 'profile')
+        .innerJoinAndSelect('user.roles', 'roles')
+        // .where('user.username = :username', { username })
+        // .andWhere('profile.gender = :gender', { gender })
+        .andWhere('roles.id = :role', { role })
+        .getMany()
+    );
   }
 
   async find(username: string) {
